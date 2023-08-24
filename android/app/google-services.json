@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "678367244817",
+    "project_id": "bookies-1fc77",
+    "storage_bucket": "bookies-1fc77.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678367244817:android:fc09a6875237e2430d37b0",
+        "android_client_info": {
+          "package_name": "com.example.bookies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678367244817-15ee08sel0gt3fa4ssnm84kr2lahu8k9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUC5pj-0JgGP-ddaGXp3iY_P1y5P8q5oU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678367244817-15ee08sel0gt3fa4ssnm84kr2lahu8k9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
