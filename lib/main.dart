@@ -2,6 +2,7 @@
 import 'package:bookies/admin.dart';
 import 'package:bookies/admin/catscreen.dart';
 import 'package:bookies/adventure.dart';
+import 'package:bookies/cartpage.dart';
 import 'package:bookies/category.dart';
 import 'package:bookies/admin/catscreen.dart';
 
@@ -29,7 +30,7 @@ void main() async {
   await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: 'admin',
+    initialRoute: 'home',
     routes: {
       'drawer': (context) => MyDrawer(),
       'login': (context) => MyLogin(),
@@ -48,7 +49,9 @@ void main() async {
       'prodetails': (context) => ProDetails(),
       'search': (context) => MySearch(),
       'admin': (context) => MyAdmin(),
-      //'catscreen': (context) => CatSreen(),
+      //'cartpage': (context) => MyCart(),
+      //'productdetails': (context) => MyDetail(),
+
 
 
     },

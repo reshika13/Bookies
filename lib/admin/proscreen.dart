@@ -23,6 +23,11 @@ class _ProScreenState extends State<ProScreen> {
           {
             return Center(child: CircularProgressIndicator(),);
           }
+          else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (!snapshot.hasData || snapshot.data == null || snapshot.data.snapshot.value == null) {
+            return Text('No data');
+          }
           else if(!snapshot.hasData){
             return Text('no data');
           }
