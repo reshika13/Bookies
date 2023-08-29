@@ -5,13 +5,16 @@ import '../productdetails.dart';
 
 class ProScreen extends StatefulWidget {
   ProScreen ({super.key, required this.cat});
+
   Map<dynamic,dynamic> cat;
+ // Map<dynamic,dynamic> pro;
   @override
   State<ProScreen> createState() => _ProScreenState();
 }
 
 class _ProScreenState extends State<ProScreen> {
   final dbRef = FirebaseDatabase.instance.ref('Product');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

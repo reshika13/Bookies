@@ -27,23 +27,22 @@ class _CatScreenState extends State<CatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Category List'),),
+      appBar: AppBar(
+        title: Text('Category List'),
+      ),
       body: StreamBuilder(
         stream: dbRef.onValue,
-        builder:
-            (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (!snapshot.hasData) {
             return Text('no data');
           } else {
-            List<dynamic> catlist =
-            snapshot.data!.snapshot.value.toList();
+            List<dynamic> catlist = snapshot.data!.snapshot.value.toList();
             catlist.removeAt(0);
             print(catlist![0]['name']);
             return Container(
               margin: EdgeInsets.only(top: 10),
-
               child: ListView.builder(
                 // shrinkWrap: true,
                 // physics: NeverScrollableScrollPhysics(),
@@ -51,8 +50,7 @@ class _CatScreenState extends State<CatScreen> {
                 itemCount: catlist.length,
                 itemBuilder: (BuildContext context, int index) {
                   Color randomColor =
-                  Color(Random().nextInt(0xFFFFFFFF))
-                      .withOpacity(1.0);
+                      Color(Random().nextInt(0xFFFFFFFF)).withOpacity(1.0);
                   return Container(
                     decoration: BoxDecoration(
                       color: randomColor,
@@ -80,8 +78,7 @@ class _CatScreenState extends State<CatScreen> {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(
-                              left: 10),
+                          padding: const EdgeInsets.only(left: 10),
                           child: Text(
                             catlist[index]['name']!,
                             style: TextStyle(
@@ -93,14 +90,23 @@ class _CatScreenState extends State<CatScreen> {
                         Spacer(),
                         InkWell(
                           child: Container(
-                              child: Icon(Icons.edit, color: Colors.white,
-                              )),
+                              child: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                          )),
                         ),
-                        SizedBox(width: 6,),
+                        SizedBox(
+                          width: 6,
+                        ),
                         InkWell(
+                          onTap: () {
+                            // _deleteProduct(prodList[index]['id']);
+                          },
                           child: Container(
                               margin: EdgeInsets.only(right: 8),
-                              child: Icon(Icons.delete, color: Colors.white,
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
                               )),
                         ),
                       ],
@@ -112,7 +118,6 @@ class _CatScreenState extends State<CatScreen> {
           }
         },
       ),
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Handle the button press here
@@ -124,86 +129,95 @@ class _CatScreenState extends State<CatScreen> {
   }
 
   void openAddDialog() {
-    showDialog(context: context, builder: (BuildContext context) {
-      return Dialog(
-        child:
-        Container(
-          height: 250,
-          child: Column(
-            children: [
-              TextButton(
-                  onPressed: () {
-                    pickFromGallery();
-                    Navigator.pop(context);
-                  },
-                  child: Text('Choose an image from Gallery')),
-            ],
-          ),
-        ),
-      );
-    },);
+    String categoryName = ''; // To store the category name
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return Dialog(
+            child: Container(
+              height: 350, // Increased height to accommodate the TextField
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  selectedImageFile != null
+                      ? Image.file(selectedImageFile!,
+                          height: 100, width: double.infinity)
+                      : const Text('No image selected'),
+                  TextButton(
+                    onPressed: () async {
+                      final pickedFile =
+                          await picker.pickImage(source: ImageSource.gallery);
+
+                      if (pickedFile != null) {
+                        setState(() {
+                          selectedImageFile = File(pickedFile.path);
+                        });
+                      }
+                    },
+                    child: Text(
+                      'Pick an image',
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20), // Add some spacing
+                  TextFormField(
+                    onChanged: (value) {
+                      categoryName = value; // Update the category name
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Enter category name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        )),
+                  ),
+                  SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            print('fffffff');
+                            // print('Category Name: $categoryName');
+                            // print('Image Path: ${selectedImageFile?.path}');
+                            // Navigator.of(context).pop();
+                          },
+                          child: Text('Save'),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            print('fffffff');
+                            // Navigator.of(context).pop();
+                          },
+                          child: Text('Cancel'),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
+    );
   }
 
-  void pickFromGallery() async {
-    ImagePicker picker = ImagePicker();
-    XFile? imgFile = await picker.pickImage(source: ImageSource.gallery);
-    if (imgFile != null) {
-      var image;
-      _showImagePreviewDialog(context, File(image.path));
-
-      // sendImageToFirebase(imgFile);
-    } else {
-      imgPath = 'No image has been selected';
+  void _deleteProduct(String productId) async {
+    try {
+      await dbRef
+          .child(productId)
+          .remove(); // Remove the product from the database
+      // Refresh the UI or perform other necessary actions after deletion
+    } catch (error) {
+      // Handle error, display a message, etc.
     }
   }
-
-  void sendImageToFirebase(XFile imgFile) async {
-    final stref = await FirebaseStorage.instance.ref('Users');
-    var fileName = DateTime
-        .now()
-        .microsecondsSinceEpoch
-        .toString();
-
-    //store image choose from gallary to firebase storage
-    await stref.child('image/$fileName').putFile(File(imgFile.path));
-
-    //get download url of upload image
-    var imgUrl = await stref.child('image/$fileName').getDownloadURL();
-
-    final mAuth = FirebaseAuth.instance;
-    final dbRef = FirebaseDatabase.instance.ref('Users');
-    var respo = await dbRef
-        .child(mAuth.currentUser!.uid.toString())
-        .update({'image': imgUrl}).whenComplete(() =>
-    {
-    });
-  }
 }
-
- _showImagePreviewDialog(BuildContext context, File imageFile) {
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Image Preview'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Image.file(imageFile),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Close'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-

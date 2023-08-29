@@ -30,7 +30,7 @@ void main() async {
   await Firebase.initializeApp();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: 'home',
+    initialRoute: 'admin',
     routes: {
       'drawer': (context) => MyDrawer(),
       'login': (context) => MyLogin(),

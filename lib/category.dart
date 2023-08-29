@@ -21,43 +21,7 @@ class _MyCategoryState extends State<MyCategory> {
   final _bookController = TextEditingController();
   final _priceController = TextEditingController();
   final dbRef = FirebaseDatabase.instance.ref('Category');
-  final List<Map<String, dynamic>> gridMap = [
-    {
-      "title": "Harry Potter and the Goblet of Fire",
-      "price": "\$150",
-      "images":
-      "https://bookshopapocalypse.com/cdn/shop/products/harrypottergobletoffireUK-1sq_1024x1024@2x.jpg?v=1639264140",
-    },
-    {
-      "title": "Karnali Blues",
-      "price": "\$100",
-      "images":
-      "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1298524190i/10579909.jpg",
-    },
-    {
-      "title": "Shirish ko phool",
-      "price": "\$250",
-      "images":
-      "https://upload.wikimedia.org/wikipedia/commons/e/e1/Shirish_ko_Phool.jpg",
-    },
-    {
-      "title": "The Alchemist",
-      "price": "\$200",
-      "images":
-      "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1654371463i/18144590.jpg",
-    },
-    {
-      "title": "The Seven Husband of Evelyn Hugo",
-      "price": "\$250",
-      "images": "https://media.thuprai.com/front_covers/11hus.jpg",
-    },
-    {
-      "title": "The Secret",
-      "price": "\$150",
-      "images":
-      "https://m.media-amazon.com/images/I/61xj06cGiML._AC_UF1000,1000_QL80_.jpg",
-    },
-  ];
+  final List<Map<String, dynamic>> gridMap = [];
 
   @override
   Widget build(BuildContext context) {
