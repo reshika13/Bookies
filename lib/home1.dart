@@ -144,10 +144,11 @@ buildCategories(),
           } else if (!snapshot.hasData) {
             return Text('no data');
           } else {
-            List<dynamic> catlist =
-            snapshot.data!.snapshot.value.toList();
-            catlist.removeAt(0);
-            print(catlist![0]['name']);
+            Map<dynamic, dynamic> map = snapshot.data!.snapshot.value;
+            List<dynamic> catlist = [];
+            map.forEach((key, value) {
+              catlist.add(value);
+            });
             return ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: catlist.length,

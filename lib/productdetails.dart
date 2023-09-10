@@ -76,13 +76,13 @@ class _MyDetailState extends State<MyDetail> {
                         shape: BoxShape.circle,
                         color: Colors.red.shade700,
                       ),
-                      padding: EdgeInsets.all(0.5),
+                      padding: EdgeInsets.all(0.3),
                       margin: EdgeInsets.only(right: 10),
                       child: IconButton(
                         onPressed: _decrementQuantity,
                         icon: Icon(Icons.remove),
                         color: Colors.white,
-                        iconSize: 30,
+                        iconSize: 20,
                       ),
                     ),
                     Text(
@@ -213,10 +213,11 @@ class _MyDetailState extends State<MyDetail> {
         "cart_id": cartId,
         "quantity": _quantity.toString(),
         "status": 0,
-        "total_price" : widget.data['price'] * _quantity
+        "total_price": widget.data['price'] * _quantity
       }).then((value) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Item added to cart'),backgroundColor: Colors.green,
+          content: Text('Item added to cart'),
+          backgroundColor: Colors.green,
         ));
         Navigator.pop(context);
       });

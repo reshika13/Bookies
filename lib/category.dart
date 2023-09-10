@@ -50,8 +50,11 @@ class _MyCategoryState extends State<MyCategory> {
             } else if (!snapshot.hasData) {
               return Text('no data');
             } else {
-              List<dynamic> catList = snapshot.data!.snapshot.value.toList();
-              catList.removeAt(0);
+              Map<dynamic, dynamic> map = snapshot.data!.snapshot.value;
+              List<dynamic> catlist = [];
+              map.forEach((key, value) {
+                catlist.add(value);
+              });
               return
                 Container(
                   padding: EdgeInsets.all(10),
@@ -62,7 +65,7 @@ class _MyCategoryState extends State<MyCategory> {
                           padding: EdgeInsets.all(24.0),
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: catList.length,
+                          itemCount: catlist.length,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
@@ -77,7 +80,7 @@ class _MyCategoryState extends State<MyCategory> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (_) => ProScr(
-                                            cat: catList[index])));
+                                            cat: catlist[index])));
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -93,7 +96,7 @@ class _MyCategoryState extends State<MyCategory> {
                                           topLeft: Radius.circular(12.0),
                                           topRight: Radius.circular(12.0)),
                                       child: Image.network(
-                                        "${catList[index]['image']}",
+                                        "${catlist[index]['image']}",
                                         height: 170,
                                         width: double.infinity,
                                         fit: BoxFit.fill,
@@ -106,7 +109,7 @@ class _MyCategoryState extends State<MyCategory> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "${catList[index]['name']}",
+                                            "${catlist[index]['name']}",
                                             style: GoogleFonts.lato(
                                               letterSpacing: 1,
                                               fontWeight: FontWeight.bold,

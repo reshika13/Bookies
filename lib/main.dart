@@ -24,36 +24,41 @@ import 'package:bookies/selfhelp.dart';
 import 'package:bookies/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
+
+import 'cartprovider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(
+  runApp(
+
+      ChangeNotifierProvider(
+        create: (context) => CartModel(),
+        child: MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: 'admin',
+    initialRoute: 'home',
     routes: {
-      'drawer': (context) => MyDrawer(),
-      'login': (context) => MyLogin(),
-      'signup': (context) => MySignup(),
-      'home': (context) => MyHomePage(),
-      'register': (context) => Register(),
-      'novel': (context) => Novel(),
-      'fiction': (context) => Fiction(),
-      'fantasy': (context) => Fantasy(),
-      'selfHelp': (context) => SelfHelp(),
-      'dummy': (context) => Dummy(),
-      'profile': (context) => Profile(),
-      'dashboard': (context) => Dashboard(),
-      'home1': (context) => Home1(),
-      'category': (context) => MyCategory(),
-      'prodetails': (context) => ProDetails(),
-      'search': (context) => MySearch(),
-      'admin': (context) => MyAdmin(),
-      //'cartpage': (context) => MyCart(),
-      //'productdetails': (context) => MyDetail(),
-
-
-
+        'drawer': (context) => MyDrawer(),
+        'login': (context) => MyLogin(),
+        'signup': (context) => MySignup(),
+        'home': (context) => MyHomePage(),
+        'register': (context) => Register(),
+        'novel': (context) => Novel(),
+        'fiction': (context) => Fiction(),
+        'fantasy': (context) => Fantasy(),
+        'selfHelp': (context) => SelfHelp(),
+        'dummy': (context) => Dummy(),
+        'profile': (context) => Profile(),
+        'dashboard': (context) => Dashboard(),
+        'home1': (context) => Home1(),
+        'category': (context) => MyCategory(),
+        'prodetails': (context) => ProDetails(),
+        'search': (context) => MySearch(),
+        'admin': (context) => MyAdmin(),
+        'cartpage': (context) => MyCart(),
+        //'productdetails': (context) => MyDetail(),
     },
-  ));
+  ),
+      ));
 }

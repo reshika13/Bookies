@@ -21,43 +21,47 @@ class _CatScreenState extends State<CatScreen> {
   String userName = '';
   final ImagePicker picker = ImagePicker();
   String imgPath = '';
-  File? selectedImageFile;
   final dbRef = FirebaseDatabase.instance.ref('Category');
+  bool isClicked = false;
+  TextEditingController _catNameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Category List'),
+        title: const Text('Category List'),
       ),
       body: StreamBuilder(
         stream: dbRef.onValue,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (!snapshot.hasData) {
-            return Text('no data');
+            return const Text('no data');
           } else {
-            List<dynamic> catlist = snapshot.data!.snapshot.value.toList();
-            catlist.removeAt(0);
-            print(catlist![0]['name']);
+            Map<dynamic, dynamic> map = snapshot.data!.snapshot.value;
+            List<dynamic> catlist = [];
+            map.forEach((key, value) {
+              catlist.add(value);
+            });
             return Container(
-              margin: EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 10),
               child: ListView.builder(
                 // shrinkWrap: true,
-                // physics: NeverScrollableScrollPhysics(),
+                physics: BouncingScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 itemCount: catlist.length,
                 itemBuilder: (BuildContext context, int index) {
                   Color randomColor =
-                      Color(Random().nextInt(0xFFFFFFFF)).withOpacity(1.0);
+                      Color(Random().nextInt(0xFFFFFFFF)).withOpacity(0.8);
                   return Container(
                     decoration: BoxDecoration(
                       color: randomColor,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    margin: EdgeInsets.only(right: 14, left: 14, bottom: 8),
-                    padding: EdgeInsets.only(top: 10, left: 10),
+                    margin:
+                        const EdgeInsets.only(right: 14, left: 14, bottom: 8),
+                    padding: const EdgeInsets.only(top: 10, left: 10),
                     width: 100,
                     child: Row(
                       children: [
@@ -72,7 +76,7 @@ class _CatScreenState extends State<CatScreen> {
                                 fit: BoxFit.fill,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 10,
                             ),
                           ],
@@ -81,21 +85,28 @@ class _CatScreenState extends State<CatScreen> {
                           padding: const EdgeInsets.only(left: 10),
                           child: Text(
                             catlist[index]['name']!,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.white,
                                 overflow: TextOverflow.ellipsis),
                           ),
                         ),
                         //SizedBox(width: 150,),
-                        Spacer(),
+                        const Spacer(),
                         InkWell(
                           child: Container(
-                              child: Icon(
+                              child: const Icon(
                             Icons.edit,
                             color: Colors.white,
                           )),
+                          onTap: () {
+                            // print('reshika' + catlist[index]['cat_id'].toString());
+                            openEditDialog(
+                                catlist[index]['image'],
+                                catlist[index]['name'],
+                                catlist[index]['cat_id'].toString());
+                          },
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 6,
                         ),
                         InkWell(
@@ -103,8 +114,8 @@ class _CatScreenState extends State<CatScreen> {
                             // _deleteProduct(prodList[index]['id']);
                           },
                           child: Container(
-                              margin: EdgeInsets.only(right: 8),
-                              child: Icon(
+                              margin: const EdgeInsets.only(right: 8),
+                              child: const Icon(
                                 Icons.delete,
                                 color: Colors.white,
                               )),
@@ -123,85 +134,93 @@ class _CatScreenState extends State<CatScreen> {
           // Handle the button press here
           openAddDialog();
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
 
   void openAddDialog() {
+    File? selectedImageFile;
+
     String categoryName = ''; // To store the category name
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
           return Dialog(
-            child: Container(
-              height: 350, // Increased height to accommodate the TextField
-              padding: EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  selectedImageFile != null
-                      ? Image.file(selectedImageFile!,
-                          height: 100, width: double.infinity)
-                      : const Text('No image selected'),
-                  TextButton(
-                    onPressed: () async {
-                      final pickedFile =
-                          await picker.pickImage(source: ImageSource.gallery);
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 140),
+              height: selectedImageFile != null ? 430 : 250,
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    selectedImageFile != null
+                        ? Image.file(
+                            selectedImageFile!,
+                            height: 200,
+                            width: double.infinity,
+                            fit: BoxFit.fill,
+                          )
+                        : const Text('No image selected'),
+                    TextButton(
+                      onPressed: () async {
+                        final pickedFile =
+                            await picker.pickImage(source: ImageSource.gallery);
 
-                      if (pickedFile != null) {
-                        setState(() {
-                          selectedImageFile = File(pickedFile.path);
-                        });
-                      }
-                    },
-                    child: Text(
-                      'Pick an image',
-                      style: TextStyle(
-                        fontSize: 20,
+                        if (pickedFile != null) {
+                          setState(() {
+                            selectedImageFile = File(pickedFile.path);
+                          });
+                        }
+                      },
+                      child: const Text(
+                        'Pick an image',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20), // Add some spacing
-                  TextFormField(
-                    onChanged: (value) {
-                      categoryName = value; // Update the category name
-                    },
-                    decoration: InputDecoration(
-                        hintText: 'Enter category name',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        )),
-                  ),
-                  SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            print('fffffff');
-                            // print('Category Name: $categoryName');
-                            // print('Image Path: ${selectedImageFile?.path}');
-                            // Navigator.of(context).pop();
-                          },
-                          child: Text('Save'),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            print('fffffff');
-                            // Navigator.of(context).pop();
-                          },
-                          child: Text('Cancel'),
-                        )
-                      ],
+                    const SizedBox(height: 20), // Add some spacing
+                    TextFormField(
+                      onChanged: (value) {
+                        categoryName = value; // Update the category name
+                      },
+                      initialValue: categoryName,
+                      decoration: InputDecoration(
+                          // hintText: 'catlist[index]['name']',
+                          border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      )),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              addToServer(
+                                  selectedImageFile, categoryName, null);
+                            },
+                            child: const Text('Save'),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancel'),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           );
@@ -218,6 +237,158 @@ class _CatScreenState extends State<CatScreen> {
       // Refresh the UI or perform other necessary actions after deletion
     } catch (error) {
       // Handle error, display a message, etc.
+    }
+  }
+
+  void addToServer(
+      File? selectedImageFile, String categoryName, String? catid) {
+    if (selectedImageFile != null && categoryName.isNotEmpty) {
+      sendImageToFirebase(selectedImageFile, categoryName, catid);
+    } else if (categoryName.isNotEmpty) {
+      updateName(categoryName, catid);
+    }
+  }
+
+  void sendImageToFirebase(
+      File imgFile, String categoryName, String? catid) async {
+    // setState(() {
+    //   isClicked = true;
+    // });
+    final stref = FirebaseStorage.instance.ref('Category');
+    var rndNo = DateTime.now().microsecondsSinceEpoch.toString();
+
+    //store image choose from gallary to firebase storage
+    await stref.child('image/$rndNo').putFile(File(imgFile.path));
+
+    //get download url of upload image
+    var imgUrl = await stref.child('image/$rndNo').getDownloadURL();
+
+    final dbRef = FirebaseDatabase.instance.ref('Category');
+    if (catid != null) {
+      await dbRef
+          .child(catid)
+          .update({'image': imgUrl, 'name': categoryName}).whenComplete(() => {
+                setState(() {
+                  isClicked = false;
+                }),
+                Navigator.of(context).pop()
+              });
+    } else {
+      await dbRef.child(rndNo).set({
+        'image': imgUrl,
+        'cat_id': rndNo,
+        'name': categoryName
+      }).whenComplete(() => {
+            setState(() {
+              isClicked = false;
+            }),
+            Navigator.of(context).pop()
+          });
+    }
+  }
+
+  void openEditDialog(String image, String name, String catid) {
+    File? selectedImageFile;
+    _catNameController.text = name;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return Dialog(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 140),
+              height: 430,
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    selectedImageFile == null
+                        ? Image.network(
+                            image,
+                            height: 200,
+                            width: double.infinity,
+                            fit: BoxFit.fill,
+                          )
+                        : Image.file(
+                            selectedImageFile!,
+                            height: 200,
+                            width: double.infinity,
+                            fit: BoxFit.fill,
+                          ),
+                    TextButton(
+                      onPressed: () async {
+                        final pickedFile =
+                            await picker.pickImage(source: ImageSource.gallery);
+
+                        if (pickedFile != null) {
+                          setState(() {
+                            selectedImageFile = File(pickedFile.path);
+                          });
+                        }
+                      },
+                      child: const Text(
+                        'Pick an image',
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20), // Add some spacing
+                    TextFormField(
+                      controller: _catNameController,
+                      decoration: InputDecoration(
+                          //hintText: 'Enter category name',
+                          border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      )),
+                    ),
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              addToServer(selectedImageFile,
+                                  _catNameController.text, catid);
+                            },
+                            child: const Text('Update'),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancel'),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  void updateName(String categoryName, String? catid) async {
+    final dbRef = FirebaseDatabase.instance.ref('Category');
+    if (catid != null) {
+      await dbRef
+          .child(catid)
+          .update({'name': categoryName}).whenComplete(() => {
+                setState(() {
+                  isClicked = false;
+                }),
+                Navigator.of(context).pop()
+              });
     }
   }
 }
