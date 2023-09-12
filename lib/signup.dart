@@ -34,7 +34,8 @@ class _MySignupState extends State<MySignup> {
       //   ),
       // ),
 
-      body: Form(
+      body:
+      Form(
         key: _formKey,
         child: Stack(
           children: [

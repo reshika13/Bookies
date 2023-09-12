@@ -247,7 +247,7 @@ buildCategories(),
                       margin: const EdgeInsets.all(10),
                       // padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        color: Colors.purple.shade600,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Column(
@@ -273,14 +273,14 @@ buildCategories(),
 
                                   style: TextStyle(
                                     overflow: TextOverflow.ellipsis,
-                                    color: Colors.white,
+                                    color: Colors.black,
 
                                   ),
                                 ),
                                 SizedBox(height: 2,),
                                 Text('Rs ${prodList[index]['price']}',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
 
                                   ),
                                 ),

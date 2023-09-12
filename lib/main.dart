@@ -1,5 +1,6 @@
 
 import 'package:bookies/admin.dart';
+import 'package:bookies/admin/addproducts.dart';
 import 'package:bookies/admin/catscreen.dart';
 import 'package:bookies/adventure.dart';
 import 'package:bookies/cartpage.dart';
@@ -32,12 +33,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
-
       ChangeNotifierProvider(
         create: (context) => CartModel(),
         child: MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: 'home',
+    initialRoute: 'addproducts',
     routes: {
         'drawer': (context) => MyDrawer(),
         'login': (context) => MyLogin(),
@@ -57,6 +57,7 @@ void main() async {
         'search': (context) => MySearch(),
         'admin': (context) => MyAdmin(),
         'cartpage': (context) => MyCart(),
+        'addproducts': (context) => AddProducts(),
         //'productdetails': (context) => MyDetail(),
     },
   ),
