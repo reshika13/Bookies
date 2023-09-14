@@ -262,15 +262,7 @@ class _AddProductsState extends State<AddProducts> {
                           'Save',
                           style: TextStyle(backgroundColor: Colors.blue),
                         )),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    ElevatedButton(
-                        onPressed: () {},
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(backgroundColor: Colors.blue),
-                        )),
+
                   ],
                 ),
               ]),

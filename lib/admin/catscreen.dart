@@ -111,7 +111,7 @@ class _CatScreenState extends State<CatScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            // _deleteProduct(prodList[index]['id']);
+                            _deleteProduct(catlist[index]['cat_id'].toString());
                           },
                           child: Container(
                               margin: const EdgeInsets.only(right: 8),
@@ -185,7 +185,7 @@ class _CatScreenState extends State<CatScreen> {
                     const SizedBox(height: 20), // Add some spacing
                     TextFormField(
                       onChanged: (value) {
-                        categoryName = value; // Update the category name
+                        categoryName = value;
                       },
                       initialValue: categoryName,
                       decoration: InputDecoration(
@@ -229,15 +229,60 @@ class _CatScreenState extends State<CatScreen> {
     );
   }
 
-  void _deleteProduct(String productId) async {
-    try {
-      await dbRef
-          .child(productId)
-          .remove(); // Remove the product from the database
-      // Refresh the UI or perform other necessary actions after deletion
-    } catch (error) {
-      // Handle error, display a message, etc.
-    }
+  void _deleteProduct(String catId) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext
+      context) {
+        return AlertDialog(
+          title: const Text(
+              'Confirm Delete'),
+          content: const Text(
+              'Are you sure you want to delete this category?'),
+          actions: [
+            TextButton(
+              onPressed:
+                  () {
+                Navigator.of(
+                    context)
+                    .pop(); // Close the dialog
+              },
+              child: Text(
+                  'Cancel'),
+            ),
+            TextButton(
+              onPressed:
+                  () async {
+                try {
+                  await dbRef
+                      .child(catId)
+                      .remove()
+                      .then((value) =>
+                  {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Category deleted successfully'),
+                      backgroundColor: Colors.green,
+                    )),
+                    Navigator.of(context).pop()
+                  });
+                } catch (error) {
+                  ScaffoldMessenger.of(
+                      context)
+                      .showSnackBar(
+                    SnackBar(
+                      content:
+                      Text('Error deleting category $error'),
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                  'Delete'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void addToServer(

@@ -37,7 +37,7 @@ void main() async {
         create: (context) => CartModel(),
         child: MaterialApp(
     debugShowCheckedModeBanner: false,
-    initialRoute: 'addproducts',
+    initialRoute: 'admin',
     routes: {
         'drawer': (context) => MyDrawer(),
         'login': (context) => MyLogin(),
